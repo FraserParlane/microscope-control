@@ -14,16 +14,20 @@ class Stepper:
         ena_pin: int = 8,
         dir_pin: int = 10,
         pul_pin: int = 12,
+        update_sec: float = 0.1,
+        signal_sec: float = 0.001,
     ) -> None:
         
         self.ena_pin = ena_pin
         self.dir_pin = dir_pin
         self.pul_pin = pul_pin
+        self.update_sec = update_sec
+        self.signal_sec = signal_sec
         
         # Configure the basic state of the namespace
         manager = Manager()
         self.ns = manager.Namespace()
-        self.ns.enable = False
+        self.ns.val = 0
         
         # Configure the GPIO pins
         GPIO.setmode(GPIO.BOARD)
@@ -45,20 +49,26 @@ class Stepper:
     ) -> None:
         """Runs continuously to control stepper motor."""
         while True:
-            if ns.enable:
-                GPIO.output(self.ena_pin, GPIO.LOW)
-                for i in range(500):
-                    GPIO.output(self.pul_pin, GPIO.HIGH)
-                    time.sleep(0.001)
-                    GPIO.output(self.pul_pin, GPIO.LOW)
-                    time.sleep(0.001)
+            
+            # If no value and enabled, disable.
+            if ns.val == 0 and GPIO.input(self.ena_pin) == 0:
                 GPIO.output(self.ena_pin, GPIO.HIGH)
-                ns.enable = False
+                
+            # If value and disabled, enable.
             else:
-                time.sleep(0.1)
+                if GPIO.input(self.ena_pin) == 0:
+                    GPIO.output(self.ena_pin, GPIO.LOW)
+                
+                n_steps = ?
+                step_sec = ?
+                
+                for _ in range(n_steps):
+                    GPIO.output(self.pul_pin, GPIO.HIGH)
+                    time.sleep(step_sec)
+                    GPIO.output(self.pul_pin, GPIO.LOW)
+                    time.sleep(step_sec)
     
 if __name__ == '__main__':
     stepper = Stepper()
-    for i in range(3):
-        stepper.ns.enable = True
-        time.sleep(2)
+    while True:
+        stepper.ns.val = input('Update:')
