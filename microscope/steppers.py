@@ -1,75 +1,63 @@
 from multiprocessing.managers import Namespace
 from multiprocessing import Process, Manager
+from dataclasses import dataclass
+from typing import Optional
 import RPi.GPIO as GPIO
 import time
 
+GPIO.setwarnings(False)
+    
 
 class Stepper:
     def __init__(
         self,
-        ena_pin: int,
-        dir_pin: int,
-        pul_pin: int,
+        ena_pin: int = 8,
+        dir_pin: int = 10,
+        pul_pin: int = 12,
     ) -> None:
         
         self.ena_pin = ena_pin
         self.dir_pin = dir_pin
-        self.pul_pin = dir_pin
-        self._action: float = 0
+        self.pul_pin = pul_pin
         
-        # multiprocessing objects
+        # Configure the basic state of the namespace
         manager = Manager()
         self.ns = manager.Namespace()
+        self.ns.enable = False
+        
+        # Start the continuous process
+        process = Process(
+            target=self._run,
+            kwargs=dict(ns=self.ns),
+        )
+        process.start()
+
+        # Configure the GPIO pins
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(self.ena_pin, GPIO.OUT)
+        GPIO.setup(self.dir_pin, GPIO.OUT)
+        GPIO.setup(self.pul_pin, GPIO.OUT)
         
     def _run(
         self,
         ns,
     ) -> None:
-        
-        pass
-
-
-        
-
-
-def run():
-    
-    # Pin 6 - ground
-    # Pin 8 - (GPIO 14, UART TX) -> ENA+
-    # Pin 10 - (GPIO 15, UART RX) -> DIR+
-    # Pin 12 - (GPIO 18, PCM CLK) -> PUL+
-    
-    ENA = 8
-    DIR = 10
-    PUL = 12
-    
-    # Set up board
-    GPIO.setmode(GPIO.BOARD)
-    
-    # Establish pin types
-    GPIO.setup(ENA, GPIO.OUT)
-    GPIO.setup(DIR, GPIO.OUT)
-    GPIO.setup(PUL, GPIO.OUT)
-    
-    # Confirm that the motor is enabled
-    GPIO.output(ENA, GPIO.LOW)
-
-    try:
-        # Turn
+        """Runs continuously to control stepper motor."""
         while True:
-            
-            GPIO.output(PUL, GPIO.HIGH)
-            
-            time.sleep(0.001)
-            
-            GPIO.output(PUL, GPIO.LOW)
-
-            time.sleep(0.001)
-            
-    # Disable the motor on exit
-    except KeyboardInterrupt:
-        GPIO.output(ENA, GPIO.HIGH)
-
-
+            if ns.enable:
+                GPIO.output(self.ena_pin, GPIO.LOW)
+                for i in range(500):
+                    GPIO.output(self.pul_pin, GPIO.HIGH)
+                    time.sleep(0.001)
+                    GPIO.output(self.pul_pin, GPIO.LOW)
+                    time.sleep(0.001)
+                GPIO.output(self.ena_pin, GPIO.HIGH)
+                ns.enable = False
+            else:
+                time.sleep(0.1)
+    
 if __name__ == '__main__':
-    run()
+    stepper = Stepper()
+    for i in range(3):
+        stepper.ns.enable = True
+        time.sleep(2)
