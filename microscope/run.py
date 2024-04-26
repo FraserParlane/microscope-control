@@ -7,18 +7,14 @@ import time
 logging.basicConfig(level=logging.DEBUG)
 
 # Delay between reading the mouse
-mouse_read_sec = 0.01 # TODO can be zero.
+motion_update_sec = 0.1
+update_steps = 100
 
 # Speed parameters
 speed_min = 1
 speed_max = 10
 speed_state = 5
 
-@dataclass
-class Stepper:
-    ena_pin: int
-    dir_pin: int
-    pul_pin: int
     
 
 def button_callback(state, buttons) -> None:
@@ -30,8 +26,7 @@ def button_callback(state, buttons) -> None:
         speed_state = min(speed_max, speed_state + 1)
     else:
         return None
-    print(speed_state)
-    logger.debug(f'speed_state: {speed_state}')
+    logging.debug(f'speed_state: {speed_state}')
 
 def run():
     
@@ -49,12 +44,12 @@ def run():
             
             # Read the mouse
             state = mouse.read()
+            print('a')
             
-            
-            
-            # Sleep before repolling the mouse
-            time.sleep(mouse_read_sec)
-            
+            for i in range(update_steps):
+                pass
+                            
+            # Sleep before repolling the mouse            
     except KeyboardInterrupt:
         pass
     
