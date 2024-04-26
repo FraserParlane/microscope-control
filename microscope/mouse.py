@@ -2,18 +2,11 @@ import pyspacemouse
 import time
 
 mouse = pyspacemouse.open()
-minx = 0
-maxx = 0
-miny = 0
-maxy = 0
+counter = 0
 if mouse:
-    while 1:
+    while True:
         state = pyspacemouse.read()
-        # minx = min(minx, state.x)
-        # maxx = max(maxx, state.x)
-        # miny = min(miny, state.y)
-        # maxy = max(maxy, state.y)
-        print(state.x, state.y, state.z)
-        # print(minx, maxx, miny, maxy)
-        time.sleep(0.01)
-
+        if counter % 10 == 0:
+            print(state.x, state.y, state.z, state.pitch, state.roll, state.yaw)
+        counter += 1
+        # time.sleep(0.01)
