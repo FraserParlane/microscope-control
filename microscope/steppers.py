@@ -25,6 +25,12 @@ class Stepper:
         self.ns = manager.Namespace()
         self.ns.enable = False
         
+        # Configure the GPIO pins
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(self.ena_pin, GPIO.OUT)
+        GPIO.setup(self.dir_pin, GPIO.OUT)
+        GPIO.setup(self.pul_pin, GPIO.OUT)
+        
         # Start the continuous process
         process = Process(
             target=self._run,
@@ -32,11 +38,6 @@ class Stepper:
         )
         process.start()
 
-        # Configure the GPIO pins
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(self.ena_pin, GPIO.OUT)
-        GPIO.setup(self.dir_pin, GPIO.OUT)
-        GPIO.setup(self.pul_pin, GPIO.OUT)
         
     def _run(
         self,
