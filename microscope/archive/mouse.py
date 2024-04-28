@@ -2,13 +2,13 @@ import pyspacemouse
 import logging
 import time
 
+# Here is an exmaple on how to use the buttons to trigger a callback function.
 
 # Speed parameters
 speed_min = 1
 speed_max = 10
 speed_state = 5
 
-    
 
 def button_callback(state, buttons) -> None:
     """Called when left and right buttons pressed. Updates speed_state"""
@@ -23,12 +23,8 @@ def button_callback(state, buttons) -> None:
     print(speed_state)
 
 mouse = pyspacemouse.open(button_callback=button_callback)
-counter = 0
 if mouse:
     while True:
         state = pyspacemouse.read()
         print(state.roll)
-        # if counter % 10 == 0:
-            # print(state.x, state.y, state.z, state.pitch, state.roll, state.yaw)
-        counter += 1
-        # time.sleep(0.01)
+        
