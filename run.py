@@ -24,13 +24,13 @@ def run():
     
     try:
     
-        # Create the mouse connection
+        # Create the mouse connection. Wait until the mouse is available.
         while True:
             try:
                 mouse = pyspacemouse.open()
                 break
             except:
-                pass
+                time.sleep(0.5)
     
         base = time.time()
         while True:
