@@ -20,13 +20,15 @@ def button_callback(state, buttons) -> None:
     else:
         return None
     logging.debug(f'speed_state: {speed_state}')
+    print(speed_state)
 
 mouse = pyspacemouse.open(button_callback=button_callback)
 counter = 0
 if mouse:
     while True:
         state = pyspacemouse.read()
-        if counter % 10 == 0:
-            print(state.x, state.y, state.z, state.pitch, state.roll, state.yaw)
+        print(state.roll)
+        # if counter % 10 == 0:
+            # print(state.x, state.y, state.z, state.pitch, state.roll, state.yaw)
         counter += 1
         # time.sleep(0.01)

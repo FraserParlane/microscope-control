@@ -13,15 +13,23 @@ update_steps = 100
 
 def run():
     
+    update_sec = 0.1
+    signal_sec = 0.001
+    
+    mouse = pyspacemouse.open()
     stepper = Stepper()
-    while True:
-        for i in np.linspace(0, 1, 10):
-            stepper.ns.val = i
-            time.sleep(1)
+    
+    base = time.time()
 
-    
-    
-    
+    try:    
+        while True:            
+            mouse_state = pyspacemouse.read()
+            now = time.time()
+            if now - base > update_sec:
+                stepper.ns.val = mouse_state.roll
+                base = time.time()
+    except KeyboardInterrupt:
+        stepper.disable()
     
 if __name__ == '__main__':
     run()

@@ -78,8 +78,9 @@ class Stepper:
                     GPIO.output(self.ena_pin, GPIO.LOW)
                                
                 # Calculate step size 
-                n_steps = int(self.n_update_max * ns.val)
+                n_steps = max(int(self.n_update_max * ns.val), 1)
                 step_sec = (self.update_sec / n_steps) / 2
+                print(n_steps)
                 
                 # Perform movement
                 for _ in range(n_steps):
