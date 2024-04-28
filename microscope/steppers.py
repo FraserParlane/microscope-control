@@ -17,6 +17,13 @@ class Stepper:
         update_sec: float = 0.1,
         signal_sec: float = 0.001,
     ) -> None:
+        """
+        # Defaults are for first motor. (Top controller.)
+        ena_pin - engaged when low (will warm up when engaged).
+        dir_pin - direction pin. Clockwise facing the motor when high.
+        pul_pin - initates a step when changing from high to low.
+        update_sec - 
+        """
         
         self.ena_pin = ena_pin
         self.dir_pin = dir_pin
@@ -28,7 +35,9 @@ class Stepper:
         # and off
         self.n_update_max = int((update_sec/signal_sec)/2)
         
-        # Configure the basic state of the namespace
+        # Configure the basic state of the namespace. The ns namespace can be 
+        # read within the process, and updated from outsite of the process.
+        # Only .val is used.
         manager = Manager()
         self.ns = manager.Namespace()
         self.ns.val = 0
@@ -47,12 +56,10 @@ class Stepper:
         process.start()
 
     def disable(self) -> None:
+        """Disable the motor."""
         GPIO.output(self.ena_pin, GPIO.HIGH)
         
-    def _run(
-        self,
-        ns,
-    ) -> None:
+    def _run(self, ns) -> None:
         """Runs continuously to control stepper motor."""
         while True:
             
@@ -62,7 +69,7 @@ class Stepper:
             # If should be stationary
             if ns.val == 0:
                 
-                # If currently engaged, unengage
+                # If engaged, disengage
                 if ena_pin == GPIO.LOW:
                     GPIO.output(self.ena_pin, GPIO.HIGH)
                 
@@ -73,14 +80,20 @@ class Stepper:
             # If should be moving
             else:
                 
-                # If disengaged
+                # If disengaged, engage
                 if ena_pin == GPIO.HIGH:
                     GPIO.output(self.ena_pin, GPIO.LOW)
-                               
+                    
+                # Determine direction
+                dir_pin = GPIO.input(self.dir_pin)
+                if ns.val < 0 and dir_pin == GPIO.HIGH:
+                    GPIO.output(self.dir_pin, GPIO.LOW)
+                elif ns.val > 0 and dir_pin == GPIO.LOW:
+                    GPIO.output(self.dir_pin, GPIO.HIGH)
+                                               
                 # Calculate step size 
-                n_steps = max(int(self.n_update_max * ns.val), 1)
+                n_steps = max(int(self.n_update_max * abs(ns.val)), 1)
                 step_sec = (self.update_sec / n_steps) / 2
-                print(n_steps)
                 
                 # Perform movement
                 for _ in range(n_steps):
