@@ -1,7 +1,27 @@
 import pyspacemouse
+import logging
 import time
 
-mouse = pyspacemouse.open()
+
+# Speed parameters
+speed_min = 1
+speed_max = 10
+speed_state = 5
+
+    
+
+def button_callback(state, buttons) -> None:
+    """Called when left and right buttons pressed. Updates speed_state"""
+    global speed_state
+    if buttons[0]:
+        speed_state = max(speed_min, speed_state - 1)
+    elif buttons[-1]:
+        speed_state = min(speed_max, speed_state + 1)
+    else:
+        return None
+    logging.debug(f'speed_state: {speed_state}')
+
+mouse = pyspacemouse.open(button_callback=button_callback)
 counter = 0
 if mouse:
     while True:
