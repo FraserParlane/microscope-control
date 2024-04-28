@@ -25,7 +25,12 @@ def run():
     try:
     
         # Create the mouse connection
-        mouse = pyspacemouse.open()
+        while True:
+            try:
+                mouse = pyspacemouse.open()
+                break
+            except:
+                pass
     
         base = time.time()
         while True:
