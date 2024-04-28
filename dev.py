@@ -24,10 +24,9 @@ def run():
     
     try:
     
-    # Create the mouse connection
-    mouse = pyspacemouse.open()
+        # Create the mouse connection
+        mouse = pyspacemouse.open()
     
-    try:    
         base = time.time()
         while True:
             # Continuously poll the mouse, to have the latest position available
@@ -42,11 +41,9 @@ def run():
                 
                 # Update time
                 base = time.time()
-            else:
-                time.sleep(update_sec)
                 
     # Disable motors to prevent overheating.
-    except KeyboardInterrupt:
+    except:
         stepper_x.disable()
         stepper_y.disable()
         stepper_z.disable()

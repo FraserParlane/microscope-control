@@ -90,7 +90,7 @@ class Stepper:
                     GPIO.output(self.dir_pin, GPIO.LOW)
                 elif ns.val > 0 and dir_pin == GPIO.LOW:
                     GPIO.output(self.dir_pin, GPIO.HIGH)
-                                               
+
                 # Calculate step size 
                 n_steps = max(int(self.n_update_max * abs(ns.val)), 1)
                 step_sec = (self.update_sec / n_steps) / 2
