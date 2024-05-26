@@ -1,4 +1,4 @@
-from microscope.steppers import Stepper
+from steppers import Stepper
 import pyspacemouse
 import time
 

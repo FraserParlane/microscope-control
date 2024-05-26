@@ -1,0 +1,1 @@
+docker run -d -p 3000:3000 --name=grafana -v grafana-storage:/Users/fraserparlane/Projects/microscope-control/graphana_storage grafana/grafana
