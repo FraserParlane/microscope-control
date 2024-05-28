@@ -1,0 +1,41 @@
+# Space mouse configuration
+mouse:
+
+  # How fast should the spacemouse be polled for a new position.
+  update_sec: 0.1
+
+# Stepper configrations
+steppers:
+
+  # how fast should the movement speed of the motor be updated.
+  update_sec: 0.1
+
+  # The fastest rate at which the pol pin of the stepper motor should be
+  # toggled. This defines the movement sensitivity of the mouse.
+  signal_sec: 0.001
+
+  # Should the stepper motors remain engaged if there is no movement.
+  keep_engaged: false
+
+# If the mouse is not connected, how long to wait before attempting to
+# reconnect.
+mouse_timeout: 0.5
+
+# Configure the Raspberry Pi pins for the stage (x, y) and for focus.
+stepper_x:
+  id: 'x'
+  ena_pin: 8
+  dir_pin: 10
+  pul_pin: 12
+
+stepper_y:
+  id: 'y'
+  ena_pin: 22
+  dir_pin: 24
+  pul_pin: 12
+
+stepper_z:
+  id: 'z'
+  ena_pin: 36
+  dir_pin: 38
+  pul_pin: 40

@@ -1,5 +1,6 @@
 from multiprocessing import Process, Manager
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
+from RPi import GPIO
 from enum import Enum
 import time
 
@@ -16,10 +17,10 @@ GPIO.setwarnings(False)
 class Stepper:
     def __init__(
         self,
+        id: str = 'none',
         ena_pin: int = 8,
         dir_pin: int = 10,
         pul_pin: int = 12,
-        id: str = 'none',
         update_sec: float = 0.1,
         signal_sec: float = 0.001,
         keep_engaged: bool = False,
@@ -31,14 +32,14 @@ class Stepper:
         to 1 (full speed forward).
 
         Args:
+            id (str, optional): The name of the motor. Used in logging.
+            Defaults to 'none'.
             ena_pin (int, optional): The GPIO pin to engage the motor. LOW:
             engaged. HIGH: disengaged. Defaults to 8.
             dir_pin (int, optional): Direction pin. Clockwise facing the motor:
             HIGH. Counterclockwise facing the motor: LOW. Defaults to 10.
             pul_pin (int, optional): Initiates a step when toggled. Defaults to
             12.
-            id (str, optional): The name of the motor. Used in logging.
-            Defaults to 'none'.
             update_sec (float, optional): The frequency at which to look for
             updated data (seconds). Defaults to 0.1.
             signal_sec (float, optional): The fastest rate at which the stepper
